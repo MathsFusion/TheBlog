@@ -103,7 +103,7 @@
             </p>
         <p>A harder, yet better example in 2D, If we imagine a rocket moving through space with a constant velocity in the y direction(forwards) suddenly gets a constant force acting only in the x-axis, causing the object's x velocity the increase. If we plot y position against x position, we see it's movement,
             </p>
-        <img src="images/PlaceHolder.png" class="img-top" alt="Blog Image 1">
+        <canvas id="parametricChart1" width="400" height="200"></canvas>
             <p>Note: The axis values are arbitrary, it is more important to understand the graph's curve and compare relative values with other graphs.
             </p>
         <p>
@@ -111,13 +111,14 @@
                 <br>Now, note what happens when we double mass and calculate for the same time,
 
         </p>
-
+        <canvas id="parametricChart2" width="400" height="200"></canvas>
 
         <p>
             We see that, as acceleration is half, due to a = \( \frac{F}{m} \), so the change in velocity in the x direction is half, so it takes longer per unit time(eg. seconds) to change the objects x position, but the y values remain the same per unit time as the first one.
                 <br>Now if we double the velocity and calculate for the same time, we get a different effect,
 
         </p>
+            <canvas id="parametricChart3" width="400" height="200"></canvas>
             <p>We see that the graph is stretched double in direction of y-axis(as y velocity has been doubled), but as mass is the same, our x velocity is changing at the same rate as the first one, so our x values are the same per unit time.
             </p>
         <p>
@@ -403,5 +404,64 @@
     <a href="#" class="text-decoration-none">Return to top</a>
 </footer>
 <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function generateParametricChart(canvasId, v, m) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+
+            // Generate data points for the parametric equation
+            const dataPoints = [];
+            for (let t = 0; t <= 10; t += 0.2) {
+                dataPoints.push({x: (1/m) * t * t, y: v * t});
+            }
+
+            const data = {
+                datasets: [{
+                    label: 'y = vt, x = (F/m)t²',
+                    data: dataPoints,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    showLine: true,
+                    fill: false
+                }]
+            };
+
+            const config = {
+                type: 'scatter',
+                data: data,
+                options: {
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'x = (F/m)t²'
+                            },
+                            min: 0,
+                            max: 100
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'y = vt'
+                            },
+                            min: 0,
+                            max: 20
+                        }
+                    },
+                }
+            };
+
+            new Chart(ctx, config);
+        }
+
+        // Generate multiple charts
+        document.addEventListener("DOMContentLoaded", function() {
+            generateParametricChart('parametricChart1', 1, 1);
+            generateParametricChart('parametricChart2', 1, 2);
+            generateParametricChart('parametricChart3', 2, 1);
+        });
+    </script>
 </body>
 </html>
