@@ -126,7 +126,19 @@
                 <br>The graphs below show the change in theta for the 3 scenarios as time went on.
 
         </p>
-
+        <div class="container mt-4 mb-5">
+        <div class="row">
+            <div class="col-md-4">
+                <canvas id="parametricChart4" width="400" height="400"></canvas>
+            </div>
+            <div class="col-md-4">
+                <canvas id="parametricChart5" width="400" height="400"></canvas>
+            </div>
+            <div class="col-md-4">
+                <canvas id="parametricChart6" width="400" height="400"></canvas>
+            </div>
+        </div>
+    </div>
         <p>
             Where angle = tan<sup>-1</sup>
             \( (\frac{ xVelocity }{ yVelocity }) \)
@@ -406,18 +418,39 @@
 <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        function generateParametricChart(canvasId, v, m) {
+        function generateDataPoints(v, m, equation) {
+            const dataPoints = [];
+            const force = 2;
+            var xVel = 0;
+            var yVel = v;
+            var xPos = 0;
+            var yPos = 0;
+            for (let t = 0; t <= 10; t += 0.2) {
+                dataPoints.push(equation(xPos, yPos, xVel, yVel, t));
+
+                xVel += (force/m) * 0.2
+                xPos += xVel * 0.2
+                yPos += yVel * 0.2
+            }
+            return dataPoints;
+        }
+
+        function parametricEquation(pX, pY, vX, vY, t) {
+            return { x: pX, y: pY };
+        }
+
+        function inverseTanEquation(pX, pY, vX, vY, t) {
+            return { x: t, y: (180/Math.PI) * Math.atan(vX/vY) };
+        }
+
+        function generateParametricChart(canvasId, v, m, equation, maxX, maxY) {
             const ctx = document.getElementById(canvasId).getContext('2d');
 
-            // Generate data points for the parametric equation
-            const dataPoints = [];
-            for (let t = 0; t <= 10; t += 0.2) {
-                dataPoints.push({x: (1/m) * t * t, y: v * t});
-            }
+            const dataPoints = generateDataPoints(v, m, equation);
 
             const data = {
                 datasets: [{
-                    label: 'y = vt, x = (F/m)t²',
+                    label: equation === parametricEquation ? 'y = t, x = t²' : 'y = tan⁻¹(t), x = t²',
                     data: dataPoints,
                     borderColor: 'rgba(75, 192, 192, 1)',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -436,20 +469,24 @@
                             position: 'bottom',
                             title: {
                                 display: true,
-                                text: 'x = (F/m)t²'
+                                text: 'x = t²'
                             },
                             min: 0,
-                            max: 100
+                            max: maxX
                         },
                         y: {
                             title: {
                                 display: true,
-                                text: 'y = vt'
+                                text: equation === parametricEquation ? 'y = t' : 'y = tan⁻¹(t)'
                             },
                             min: 0,
-                            max: 20
+                            max: maxY
                         }
                     },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeInOutBounce'
+                    }
                 }
             };
 
@@ -458,9 +495,12 @@
 
         // Generate multiple charts
         document.addEventListener("DOMContentLoaded", function() {
-            generateParametricChart('parametricChart1', 1, 1);
-            generateParametricChart('parametricChart2', 1, 2);
-            generateParametricChart('parametricChart3', 2, 1);
+            generateParametricChart('parametricChart1', 1, 1, parametricEquation, 100, 20);
+            generateParametricChart('parametricChart2', 1, 2, parametricEquation, 100, 20);
+            generateParametricChart('parametricChart3', 2, 1, parametricEquation, 100, 20);
+            generateParametricChart('parametricChart4', 1, 1, inverseTanEquation, 10, 90);
+            generateParametricChart('parametricChart5', 1, 2, inverseTanEquation, 10, 90);
+            generateParametricChart('parametricChart6', 2, 1, inverseTanEquation, 10, 90);
         });
     </script>
 </body>
