@@ -143,10 +143,7 @@
             Where angle = tan<sup>-1</sup>
             \( (\frac{ xVelocity }{ yVelocity }) \)
         </p>
-        <div class="extra-info">
-            <p>Note: This leads nicely into angular velocity as you can see angle is increasing linearly, while position in previous examples was increasing at an increasing rate (accelerating) and so shows how angular velocity is used to simplify circular motion.</p>
-        </div>
-        <p>As momentum doubled, the angle change per unit time halved and so momentum affects how much a force changes an objects path, however be careful as when mass doubles, the change in x Velocity is halved, due to \( \frac{ F }{ m } \) = a and if initial velocity is double, then yVelocity is double so the value of the fraction is half, and so have the same effect on angle, but take a different path due to different parts of the velocity being affected.
+        <p>As momentum doubled, the angle change per unit time is less and so momentum affects how much a force changes an objects path, however be careful as when mass doubles, the change in x Velocity is halved, due to \( \frac{ F }{ m } \) = a and if initial velocity is double, then yVelocity is double so the value of the fraction is half, and so have the same effect on angle, but take a different path due to different parts of the momentum being affected.
             </p>
         <p>
             This is further illustrated in the math,
@@ -421,16 +418,17 @@
         function generateDataPoints(v, m, equation) {
             const dataPoints = [];
             const force = 2;
+            const deltaTime = 0.2;
             var xVel = 0;
             var yVel = v;
             var xPos = 0;
             var yPos = 0;
-            for (let t = 0; t <= 10; t += 0.2) {
+            for (let t = 0; t <= 10; t += deltaTime) {
                 dataPoints.push(equation(xPos, yPos, xVel, yVel, t));
 
-                xVel += (force/m) * 0.2
-                xPos += xVel * 0.2
-                yPos += yVel * 0.2
+                xVel += (force/m) * deltaTime
+                xPos += xVel * deltaTime
+                yPos += yVel * deltaTime
             }
             return dataPoints;
         }
